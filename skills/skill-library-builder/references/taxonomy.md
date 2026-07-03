@@ -73,6 +73,11 @@ Two-tier structure — never one grab-bag skill spanning 12 services:
   needs ≥3 skills of its own.
 - Record the chosen scope per skill in the manifest so refresh can target it.
 
+Scoped runs (`scope` ≠ repo root): classify and size against the scope unit, not the whole
+repo; name skills `<unit>-<topic>` (unit slug, sanitized); record the scope in each manifest
+entry. A later run on a different scope adds skills alongside — the trigger matrix (gate R3)
+must still be run across ALL units' descriptions together.
+
 ## Canonical ownership map
 
 Before authoring, assign every knowledge area to EXACTLY ONE skill — write the assignment
@@ -88,7 +93,14 @@ Present a proposal table before authoring anything:
 | # | Skill name | One-line scope | Primary evidence (ledger IDs) | Est. size |
 
 Plus: resolved skills root path, the canonical ownership map, anything dropped by the
-admission test and why. Wait for confirmation. If `approve=auto` was set: log the proposal to
-state.json and proceed — but still deliver the table in the final report.
+admission test and why.
+
+At this checkpoint, also write the ANSWER KEY for later gates: assign every probe in
+`.claude/skills/.skill-library/probes.md` its `expected primary skill: <name>` from the
+canonical ownership map. Review gate R3 and the Phase 6 evals score against this field — it
+must exist before authoring begins.
+
+Wait for confirmation. If `approve=auto` was set: log the proposal to state.json
+(`proposal` field) and proceed — but still deliver the table in the final report.
 This checkpoint costs one message and prevents the most expensive failure in the pipeline:
 authoring 10 deep skills from a misread of what the repo is.

@@ -58,7 +58,7 @@ Every procedure step is one of:
 
 ```
 2. Run (bash): npm run test:unit
-   Expect: "Tests: 412 passed" within ~90s  [VERIFIED: cmd @ 2026-07-02]
+   Expect: "Tests: 412 passed" within ~90s  [VERIFIED: cmd @ <today's date>]
    - Output contains "FAIL src/billing" → step 5 (known flaky suite, see traps)
    - Output contains "Missing script"   → you are in the wrong directory; cd to repo root, retry once, then STOP and report
    - Any other failure                  → STOP; paste the last 30 lines into your report
@@ -76,6 +76,8 @@ GATE: Is this change behavior-visible?
 Banned in procedure text: *investigate, ensure, verify appropriately, as needed, relevant,
 properly, handle, consider, if necessary*. Each of these is a judgment call the skill exists
 to resolve. If you cannot resolve one into branches, the honest form is a STOP condition.
+(Review gate R1's lint grep is the canonical machine form of this exact list — if you change
+one, change both.)
 
 Every procedural skill MUST end its procedure with a stop/escalate list:
 "Stop and ask the user when: <enumerated conditions>."
@@ -123,15 +125,28 @@ For every command that will appear in a generated skill:
 3. For search/read steps inside generated skills, instruct the consumer to use Grep/Glob/Read
    (named as "your file search tools"), not shell pipelines — consumers run on any OS.
 
-Re-verification one-liners (see template): run each ONCE during authoring; append the observed
-result: `# verified 2026-07-02: prints 1 line`.
+Re-verification section format (the last content section of every generated skill): one
+Tier 1–2 command per load-bearing volatile fact, one per line, with its captured observation
+appended as a comment:
+
+```
+git grep -c "jest" package.json          # verified <today's date>: prints 1
+npm run test:unit -- --listTests | more  # verified <today's date>: lists 34 files (bash)
+```
+
+Run each line ONCE during authoring and record the real result — audit mode re-runs exactly
+these lines and diffs against these recorded observations, so an unexecuted or non-portable
+one-liner breaks the library's staleness detection.
 
 ## Redaction rules (applied at WRITE time, not review time)
 
+This is the CANONICAL secret pattern set — review gate R5 greps a superset of exactly this
+set; keep them in sync.
+
 Before any ledger entry or skill content is written: strip values of variables whose names
 match `KEY|TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIAL|PRIVATE`, strings with known prefixes
-(`sk_live_`, `sk_test_`, `AKIA`, `ghp_`, `gho_`, `xox`, `-----BEGIN`), and any ≥20-char
-high-entropy literal from config/output. Replace with `<REDACTED:VAR_NAME>`. Document where a
+(`sk_live_`, `sk_test_`, `AKIA`, `ghp_`, `gho_`, `github_pat_`, `xox` + any letter,
+`-----BEGIN`), and any ≥20-char high-entropy literal from config/output. Replace with `<REDACTED:VAR_NAME>`. Document where a
 value comes from ("set DATABASE_URL — see 1Password vault 'acme-dev'" [VERIFIED: README:88]),
 never what it is. Internal hostnames in captured output: keep only if they already appear in
 committed, non-gitignored files; otherwise redact.
@@ -140,7 +155,7 @@ committed, non-gitignored files; otherwise redact.
 
 ```
 ## Provenance
-- generated: 2026-07-02 by skill-library-builder v2 · HEAD <sha>
+- generated: <today's date> by skill-library-builder v2 · HEAD <sha>
 - sources: <files/dirs consulted, comma-separated>
 - verified-shell: <bash|powershell|zsh>
 - refresh: run skill-library-builder in refresh mode; this skill regenerates when its
@@ -148,7 +163,8 @@ committed, non-gitignored files; otherwise redact.
 ```
 
 The same data goes into the manifest (references/refresh.md) at authoring time — not
-reconstructed later.
+reconstructed later. File hashes in the manifest are recomputed after ANY builder-made fix
+in Phases 5–6, so builder edits are never later misread as human edits.
 
 ## Collisions with existing skills
 

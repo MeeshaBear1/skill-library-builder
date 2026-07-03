@@ -39,13 +39,15 @@ delete most of the judgment calls where weaker models lose.
 The builder is a personal skill (available in every repo you open):
 
 ```powershell
-# PowerShell
+# PowerShell (idempotent: creates the skills dir if missing, replaces any prior install)
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills" | Out-Null
+if (Test-Path "$env:USERPROFILE\.claude\skills\skill-library-builder") { Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\skills\skill-library-builder" }
 Copy-Item -Recurse skills/skill-library-builder "$env:USERPROFILE\.claude\skills\skill-library-builder"
 ```
 
 ```bash
-# bash/zsh
-cp -r skills/skill-library-builder ~/.claude/skills/skill-library-builder
+# bash/zsh (idempotent)
+mkdir -p ~/.claude/skills && rm -rf ~/.claude/skills/skill-library-builder && cp -r skills/skill-library-builder ~/.claude/skills/skill-library-builder
 ```
 
 The libraries it *generates* are project skills, written to the target repo's

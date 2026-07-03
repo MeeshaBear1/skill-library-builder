@@ -4,9 +4,11 @@ The library's purpose is a measurable lift for weaker models on this repo. This 
 the measurement instrument and runs the first reading. Without it, a plausible-looking library
 and a working library are indistinguishable — and plausible-looking is the default failure.
 
-## Probes (mined in Phase 1, finalized here)
+## Probes (mined in Phase 1, expected skill assigned at the Phase 3 checkpoint, finalized here)
 
-`.claude/skills/.skill-library/probes.md` holds 5–10 probes. Finalize each to this schema:
+`.claude/skills/.skill-library/probes.md` holds 5–10 probes. By now each already carries its
+`expected primary skill` (assigned from the ownership map in Phase 3 and used by gate R3).
+Finalize each to this schema:
 
 ```
 ### P<n>: <task statement as a user would type it>
@@ -31,6 +33,12 @@ sessions or add a trigger description.
 
 Already partially done as review gate R6. Complete the set here: fresh subagent, repo +
 library, one probe at a time, ≥2 probes total (more if gates R3/R6 forced skill rewrites).
+
+If subagents are unavailable in this session: attempt the probes yourself under the
+fresh-inputs constraint (skills + repo only; the ledger and your authoring memory are
+off-limits), label every result "self-run, not cold-context" in the final report, and state
+that the operator A/B protocol below is the authoritative measurement in that case.
+
 Record per probe in the final report:
 
 | probe | skill loaded (right one?) | checkpoint reached? | steps followed literally vs improvised | turns |
@@ -68,5 +76,7 @@ the final report:
 | model succeeded ignoring skills | probe too easy OR skill redundant | replace probe; reconsider skill admission |
 | model followed skill into an error | factual failure — a claim survived review wrongly | R2 on that skill, then fix |
 
-Eval failures during this phase are BUILD failures: fix and re-run the affected gate. Only
-gloss-free results go in the final report.
+Eval failures during this phase are BUILD failures: fix and re-run the affected gate — under
+review.md's fix protocol (R1 + R2 delta on the changed text; a final R5 re-run before Phase 7
+whenever content changed after R5 first passed). Only gloss-free results go in the final
+report.

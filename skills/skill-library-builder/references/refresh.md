@@ -12,17 +12,19 @@ authored — never reconstructed later):
 ```json
 {
   "builderVersion": 2,
-  "generatedAt": "2026-07-02",
+  "generatedAt": "<today's date>",
   "headSha": "<git rev-parse HEAD at generation>",
   "scope": ".",
   "excludes": ["vendor/**"],
   "skills": {
     "<skill-name>": {
       "sources": ["src/billing/", "package.json", ".github/workflows/ci.yml"],
-      "generatedAt": "2026-07-02",
+      "generatedAt": "<today's date>",
       "headSha": "<sha>",
-      "fileHash": "<git hash-object .claude/skills/<name>/SKILL.md>",
-      "referenceFiles": ["references/incidents.md"]
+      "files": {
+        "SKILL.md": "<git hash-object .claude/skills/<name>/SKILL.md>",
+        "references/incidents.md": "<git hash-object .claude/skills/<name>/references/incidents.md>"
+      }
     }
   },
   "probes": ".claude/skills/.skill-library/probes.md"
@@ -31,8 +33,10 @@ authored — never reconstructed later):
 
 `sources` = the files/dirs whose change invalidates this skill. Choose them at authoring time
 from the ledger citations — every `[VERIFIED: file:...]` source belongs in the list.
-`fileHash` uses `git hash-object <file>` (portable, no extra tooling) — recompute and update
-after any gate-driven fix in Phase 5.
+`files` = EVERY file the skill ships (SKILL.md plus each reference file), each with its own
+`git hash-object` hash (portable, no extra tooling). Recompute and update all of a skill's
+hashes after any builder-made fix in Phases 5–6 — builder edits must never later misclassify
+as human edits.
 
 ## refresh mode
 
@@ -46,10 +50,12 @@ after any gate-driven fix in Phase 5.
    momentum. Present to the user: subsystem gone → propose deleting the skill; subsystem
    moved → remap sources and regenerate.
 5. Hand-edit check, per affected skill (and per unaffected skill, cheaply): recompute
-   `git hash-object` on the skill files; mismatch vs manifest `fileHash` = a human edited it.
-   NEVER silently overwrite a hand-edited skill: diff manifest-era content vs current, present
-   the conflict, and merge the human's changes into the regenerated version explicitly
-   (their content wins where the repo doesn't contradict it).
+   `git hash-object` for EVERY file in the skill's manifest `files` map — SKILL.md AND each
+   reference file. A mismatch in ANY file marks the whole skill hand-edited. NEVER silently
+   overwrite a hand-edited skill: diff manifest-era content vs current, present the conflict,
+   and merge the human's changes into the regenerated version explicitly (their content wins
+   where the repo doesn't contradict it). In unattended runs (`approve=auto`), hand-edited
+   skills are SKIPPED and flagged in the report — never auto-merged.
 6. Regenerate ONLY affected skills: re-run the pipeline scoped to them — targeted census on
    their sources (census.md procedure, restricted), re-author (authoring.md, all contracts
    apply), then gates R1, R2, R4, R5 on the touched skills; R3 (trigger matrix) only if any
@@ -64,22 +70,27 @@ Force-regenerate one skill regardless of drift: steps 5–7 of refresh, restrict
 skill. Use when a skill is known-wrong. If its name is not in the manifest → offer init-style
 authoring of a single new skill (admission test still applies — taxonomy.md).
 
-## audit mode (read-only; writes nothing)
+## audit mode (writes nothing to the repo or the library)
 
-The month-2 health check, cheap enough to run monthly or in CI:
+The month-2 health check, cheap enough to run monthly or in CI. Note: step 4's Tier-2
+re-verification (test/build commands) can produce normal working-tree side effects
+(node_modules, build output, caches) — in unattended/scheduled runs, restrict step 4 to
+Tier 1 commands and mark the rest "not re-verified":
 
 1. Manifest exists? Every manifest skill directory still present? Every `.claude/skills/*/`
    directory represented in the manifest? Mismatches → report.
 2. R1 mechanical lint over every skill (review.md) — catches hand edits that broke format.
 3. Staleness: drift set vs each skill's sources (steps 2–3 above) → "stale" list with the
    drifting files named.
-4. Sample re-verification: for each stale skill, run its re-verification one-liners
-   (Tier 1–2 only) and diff against recorded observations.
-5. Hand-edit inventory via fileHash comparison.
+4. Sample re-verification: for each stale skill, run its re-verification one-liners and diff
+   against recorded observations. Interactive runs: Tier 1–2. Unattended runs: Tier 1 only;
+   mark skipped lines "not re-verified".
+5. Hand-edit inventory: recompute `git hash-object` for every file in every skill's `files`
+   map; any mismatch → hand-edited.
 6. Report: healthy / stale (with drift evidence) / broken (lint failures) / orphaned /
    hand-edited — plus the single recommended action for each (usually `refresh`).
 
-Audit changes NOTHING — it is safe to run unattended and is the mode to schedule.
+Audit writes nothing to the repo or the library — it is the mode to schedule.
 
 ## Month-2 ritual (put this in the final report, verbatim)
 

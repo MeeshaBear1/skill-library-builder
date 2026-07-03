@@ -5,9 +5,23 @@ written from memory or priors — every entry cites a source. Use the agent's de
 (Glob, Grep, Read) for all file discovery and content search: they are cross-platform,
 output-capped, and prompt-free. Git is the only shell dependency in this phase.
 
-## Working artifacts (create first)
+Scope discipline: EVERY Glob/Grep pattern in this phase is rooted at the `scope` path and
+filtered by the `exclude` globs recorded in state.json during Preflight. A scoped run
+censuses only its scope.
 
-Create `.claude/skills/.skill-library/build/` containing:
+Source priority — when sources disagree, the higher one wins; record the disagreement itself
+in the ledger (it is a known-trap candidate):
+
+- **Behavior facts** (what the code does): code > tests/fixtures > CI config >
+  lockfiles/manifests > runtime & deploy scripts > docs > default-branch git history >
+  issues/TODOs/notes > inference (must be marked `[INFERRED]`).
+- **Policy/workflow facts** (what the team runs and requires): CLAUDE.md/AGENTS.md >
+  CONTRIBUTING > CI config > inference. Never contradict CLAUDE.md silently — see review
+  gate R4.
+
+## Working artifacts (created in Phase 0 — verify they exist before starting Phase 1)
+
+`.claude/skills/.skill-library/build/` contains:
 
 - `ledger.md` — evidence ledger. Append-only during census. Entry format:
   ```
@@ -17,9 +31,27 @@ Create `.claude/skills/.skill-library/build/` containing:
   - date: <today>
   ```
 - `map.md` — system map (Phase 2, schema below).
-- `state.json` — `{ "mode", "scope", "approve", "phase", "platform", "skills": {<name>: "planned|authored|reviewed"} }`.
+- `state.json` — schema:
+  ```json
+  {
+    "mode": "init|refresh|only:<name>|audit",
+    "scope": ".",
+    "exclude": ["vendor/**"],
+    "approve": "auto|checkpoint",
+    "phase": "0-7 or complete",
+    "platform": "windows-powershell|windows-gitbash|linux|macos",
+    "proposal": "taxonomy table (recorded when approve=auto; optional otherwise)",
+    "skills": {
+      "<name>": {
+        "status": "planned|authored|reviewed",
+        "gates": { "R1": "pass|fail|pending", "R2": "…", "R3": "…", "R4": "…", "R5": "…", "R6": "…" }
+      }
+    }
+  }
+  ```
 
-Update `state.json` at every phase transition and after each skill is authored.
+Update `state.json` at every phase transition, after each skill is authored, and after each
+review gate result.
 
 ## Phase 1 procedure
 
@@ -32,9 +64,9 @@ the repo shape from an alphabetical file listing — sample every unit.
 
 **2. Manifests and build config.** Glob explicitly, then Read each hit:
 `package.json`, `**/package.json` (cap: workspace roots only for monorepos),
-`pyproject.toml`, `setup.py`, `requirements*.txt`, `Cargo.toml`, `go.mod`, `*.csproj`,
-`Gemfile`, `composer.json`, `Makefile`, `justfile`, `Taskfile*`, `Dockerfile*`,
-`docker-compose*`, `CMakeLists.txt`.
+`pyproject.toml`, `setup.py`, `requirements*.txt`, `Cargo.toml`, `go.mod`, `**/*.csproj`,
+`*.sln`, `**/*.sln`, `Gemfile`, `composer.json`, `Makefile`, `justfile`, `Taskfile*`,
+`Dockerfile*`, `docker-compose*`, `CMakeLists.txt`.
 Ledger: languages, package manager (confirm via lockfile: `package-lock.json` vs `yarn.lock`
 vs `pnpm-lock.yaml` — the lockfile outranks docs), script/target names verbatim.
 
@@ -44,9 +76,12 @@ configs. Read each. Ledger: what CI actually runs (commands verbatim), on which 
 which checks block merge. CI commands are the highest-value harvest in the census — they are
 machine-executed, therefore verified by construction.
 
-**4. Tests.** Glob `**/*test*`, `**/*spec*` — but treat as path *segments*: match `tests/`,
-`test_*.py`, `*.test.ts`, `*_test.go`, `spec/`; do NOT count incidental substrings (`contest`,
-`latest`). Read 2–3 representative test files per unit. Ledger: test framework, how tests are
+**4. Tests.** Two pattern families — filename conventions AND directory contents (a filename
+glob does not see inside `tests/`): Glob `**/*test*` and `**/*spec*` for suffix conventions
+(`test_*.py`, `*.test.ts`, `*_test.go`), PLUS `**/tests/**`, `**/test/**`, `**/__tests__/**`,
+`**/spec/**` for directory contents (fixtures, factories, helpers live there under non-test
+names). Discard incidental substring hits (`contest`, `latest`). Read 2–3 representative test
+files per unit. Ledger: test framework, how tests are
 invoked (from CI or manifest scripts, not guessed), fixtures/factories location, anything the
 tests reveal about invariants.
 
@@ -60,9 +95,17 @@ pattern `TODO|FIXME|HACK|XXX|WORKAROUND|flaky|known issue|do not|DO NOT|deprecat
 Ledger: only entries that reveal operating knowledge (traps, constraints, footguns) — not
 routine TODOs. Each entry keeps its file:line.
 
-**7. Git history (default branch only).** Determine the default branch:
-`git symbolic-ref --short refs/remotes/origin/HEAD` (fallback: `git branch --show-current`).
-Then:
+**7. Git history (default branch only).** Determine the default branch — walk this chain and
+take the first that succeeds:
+1. `git symbolic-ref --short refs/remotes/origin/HEAD`
+2. `git rev-parse --verify origin/main`, then `origin/master`
+3. `git rev-parse --verify main`, then `master`
+4. None resolved → ask the user which branch is the default. Unattended (`approve=auto`) and
+   cannot ask → use `git branch --show-current`, tag EVERY history-derived ledger entry
+   `[INFERRED: default branch unknown; history read from <branch>]`, and flag it in the
+   final report.
+
+Record in the ledger which branch was used and by which chain step. Then:
 - `git log <branch> --oneline -n 100` — recent activity shape.
 - `git log <branch> --grep="revert" --grep="rollback" --grep="hotfix" -i -n 30` — WITH full
   bodies (default format, not --oneline). Failure evidence lives in explanatory commit bodies;
@@ -72,16 +115,18 @@ Then:
   map flags as risky.
 Do NOT use `--all`: unmerged branches are not shipped behavior (Iron rule 9).
 
-**8. Runtime/config surface.** Glob `*.env.example`, `config/**`, `*.config.*`,
-`settings*`, `helm/**`, `k8s/**`, `terraform/**`. Read example/template files only.
-NEVER read live credential files (Iron rule 6 list). Ledger: config variable NAMES, where each
+**8. Runtime/config surface.** Glob `.env.example`, `.env*.example`, `*.env.example`,
+`.env.sample`, `.env.template`, `config/**`, `*.config.*`, `settings*`, `helm/**`, `k8s/**`,
+`terraform/**`. Read example/template files only — Iron rule 6 permits `.example`/`.sample`/
+`.template` files and forbids every other `.env*` and credential file. Ledger: config variable NAMES, where each
 is documented as coming from, which config is required vs optional.
 
 **9. Probe mining (for Phase 6 — collect now while history is fresh).** From steps 3–7, list
 5–10 recent, concrete, repeatable tasks: real merged bug fixes, small features, CI failures.
 Record per probe: task statement, entry point file, observable success checkpoint (a command
 and its expected output, a file state, a passing test). Save to
-`.claude/skills/.skill-library/probes.md`.
+`.claude/skills/.skill-library/probes.md`. (The `expected primary skill` field is assigned
+later, at the Phase 3 taxonomy checkpoint — skills don't exist yet.)
 
 ## Phase 2: System map
 
