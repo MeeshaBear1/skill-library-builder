@@ -1,7 +1,9 @@
 # Phase 4: Authoring — format, verification, and style contracts
 
 Author ONE skill at a time, working from `map.md` and `ledger.md`, re-reading cited sources as
-you go — never from context memory. After each skill: update `state.json`, then start the next.
+you go — never from context memory. At the start of Phase 4, capture `git rev-parse HEAD` and
+today's date once (Tier 1) — every provenance block and manifest entry uses them. After each
+skill: update `state.json`, then start the next.
 
 ## Skill format contract (violations = silent load failure)
 
@@ -11,8 +13,11 @@ you go — never from context memory. After each skill: update `state.json`, the
 - `description:` ≤1024 chars, written to survive YAML: wrap in double quotes; no unescaped
   internal double quotes.
 - Frontmatter is exactly `---` / `name:` / `description:` / `---`. Nothing else.
-- After writing every skill, verify placement: Glob `.claude/skills/*/SKILL.md` and confirm
-  each new skill appears at depth exactly `<name>/SKILL.md`.
+- After writing every skill, verify placement with a dot-directory-safe listing — bash:
+  `find .claude/skills -maxdepth 2 -name SKILL.md`; PowerShell:
+  `Get-ChildItem -Recurse -Force .claude/skills -Filter SKILL.md` (Glob can return empty
+  inside dot-directories) — and confirm each new skill appears at depth exactly
+  `<name>/SKILL.md`.
 
 ## Description contract (the description is the ONLY thing that decides loading)
 
@@ -77,13 +82,19 @@ Banned in procedure text: *investigate, ensure, verify appropriately, as needed,
 properly, handle, consider, if necessary*. Each of these is a judgment call the skill exists
 to resolve. If you cannot resolve one into branches, the honest form is a STOP condition.
 (Review gate R1's lint grep is the canonical machine form of this exact list — if you change
-one, change both.)
+one, change both.) EXEMPTION: verbatim-quoted captured output (fenced or quoted text carrying
+a `[VERIFIED: cmd]` marker) is exempt — the ban governs YOUR instructions, not tool output you
+quote. Prefer trimming long quoted errors to the error head so banned words don't enter at
+all.
 
 Every procedural skill MUST end its procedure with a stop/escalate list:
 "Stop and ask the user when: <enumerated conditions>."
 
 Every procedural skill includes ONE worked example: a short real transcript of the procedure
 applied to an actual case from the ledger (a real past bug, a real build), with real output.
+Contract-style skills (no procedure): the worked example is a short real transcript
+demonstrating one contract rule — run the demonstrating command during authoring if the
+ledger lacks one.
 
 ## Evidence markers (machine-scannable; review greps for them)
 
@@ -107,8 +118,18 @@ Three-tier execution policy (Iron rule 10) for commands you run during authoring
   Read the script body / Makefile target / package.json entry INCLUDING pre/post hooks. Run
   only if side effects are contained to the working tree and local caches (no network writes,
   no DB migrations, no global installs). If the repo needs dependencies installed to do
-  anything (fresh clone): ask the user before any install whose lifecycle scripts you have
-  not read.
+  anything (fresh clone):
+  - Interactive → ask the user before any install whose lifecycle scripts you have not read.
+  - Unattended (`approve=auto`) — no one to ask; take the FIRST applicable move:
+    1. Root manifest has NO lifecycle scripts (preinstall/install/postinstall/prepare), or a
+       committed config disables them (`.npmrc` `ignore-scripts=true`) → install as Tier 2.
+    2. Lifecycle scripts exist but the ecosystem can disable them
+       (`npm ci --ignore-scripts`, `pnpm install --ignore-scripts`) → install with scripts
+       disabled. If tests later fail from a missing build step, record that observation —
+       never re-run with scripts enabled.
+    3. Neither applies → SKIP installation; author affected commands as
+       `[UNVERIFIED-CMD: needs dependency install — lifecycle scripts unreviewed]` and flag
+       it prominently in the final report.
 - **Tier 3 — forbidden without explicit user authorization**: installs with lifecycle hooks
   you haven't cleared, anything mutating a DB or network resource, deploy/publish, `rm`,
   `git` mutating verbs (reset/checkout/switch/clean/commit/push/pull/merge/rebase/stash),
@@ -134,9 +155,11 @@ git grep -c "jest" package.json          # verified <today's date>: prints 1
 npm run test:unit -- --listTests | more  # verified <today's date>: lists 34 files (bash)
 ```
 
-Run each line ONCE during authoring and record the real result — audit mode re-runs exactly
-these lines and diffs against these recorded observations, so an unexecuted or non-portable
-one-liner breaks the library's staleness detection.
+Run each line ONCE during authoring and record the real result. The published line must be
+byte-identical to the line you executed — a variant form (different flags, added pipes)
+counts as unexecuted. Audit mode re-runs exactly these lines and diffs against these recorded
+observations, so an unexecuted or non-portable one-liner breaks the library's staleness
+detection.
 
 ## Redaction rules (applied at WRITE time, not review time)
 
@@ -165,6 +188,13 @@ committed, non-gitignored files; otherwise redact.
 The same data goes into the manifest (references/refresh.md) at authoring time — not
 reconstructed later. File hashes in the manifest are recomputed after ANY builder-made fix
 in Phases 5–6, so builder edits are never later misread as human edits.
+
+## Sibling references
+
+Reference only siblings that exist on disk or are in THIS run's approved proposal. If a
+referenced sibling is ultimately not authored (dropped, deferred, partial run), replace the
+reference with a direct pointer to the underlying source file — a skill must never send its
+consumer to a skill that does not exist.
 
 ## Collisions with existing skills
 

@@ -82,8 +82,18 @@ skills/skill-library-builder/
     └── refresh.md           manifest, drift detection, refresh / only / audit modes
 ```
 
+## Example output
+
+[examples/express-smoke-test/](examples/express-smoke-test/) — real, unedited skills the
+builder generated against a fresh clone of expressjs/express, including a debugging playbook
+whose traps came from captured flaky-test output and quoted revert history (a reverted CVE
+patch, correctly flagged `[INFERRED]` where the repo records no cause).
+
 ## Provenance
 
 Built 2026-07-02. Design derived from an original spec ("Repository Skill Library Builder")
-hardened through a 6-agent adversarial critique panel — 41 findings, all addressed or
-consciously rejected in [DESIGN.md](DESIGN.md).
+hardened through: a 6-agent adversarial critique panel on the spec (41 findings → DESIGN.md),
+a 29-agent adversarial review of the built files (23 confirmed defects, all fixed), and a
+live smoke test against expressjs/express (15 friction items, all fixed — including two
+would-be-fatal ones: silent empty-Glob-on-dot-directories misreads and the unattended
+dependency-install deadlock).

@@ -3,7 +3,15 @@
 Goal: an on-disk evidence ledger and system map that later phases author FROM. Nothing here is
 written from memory or priors — every entry cites a source. Use the agent's dedicated tools
 (Glob, Grep, Read) for all file discovery and content search: they are cross-platform,
-output-capped, and prompt-free. Git is the only shell dependency in this phase.
+output-capped, and prompt-free. Git — plus a plain directory listing (`ls -A` /
+`Get-ChildItem -Force`) where noted below — are the only shell dependencies in this phase.
+
+Tool caveat (prevents silently-wrong facts): on some harnesses Glob returns nothing for
+paths inside dot-directories (`.github/`, `.claude/`, `.circleci/`). An EMPTY Glob result
+for a path you have other evidence exists (it appeared in the top-level listing) is a tool
+limitation, not repo absence — re-check with a directory listing (bash `ls -R .github`;
+PowerShell `Get-ChildItem -Recurse -Force .github`) before recording anything. Rule:
+recording an ABSENCE as a fact always requires two independent methods.
 
 Scope discipline: EVERY Glob/Grep pattern in this phase is rooted at the `scope` path and
 filtered by the `exclude` globs recorded in state.json during Preflight. A scoped run
@@ -58,8 +66,11 @@ review gate result.
 Order matters: cheap breadth first, then targeted depth. Cap everything — an unbounded sweep
 floods context and produces a worse map than a sampled one.
 
-**1. Top-level shape.** Glob `*` and `*/`. Record the directory skeleton in the ledger.
-For monorepos (classified in Preflight): Glob each unit's top level separately. Never derive
+**1. Top-level shape.** List the repo root with a directory listing — bash: `ls -A`;
+PowerShell: `Get-ChildItem -Force -Name` (Tier 1). Do NOT use Glob `*` for the skeleton: it
+returns file noise, can surface `.git` internals, and misses dot-directories. Record the
+skeleton in the ledger, including dot-directories (`.github`, `.claude`, …).
+For monorepos (classified in Preflight): list each unit's top level separately. Never derive
 the repo shape from an alphabetical file listing — sample every unit.
 
 **2. Manifests and build config.** Glob explicitly, then Read each hit:
@@ -72,7 +83,8 @@ vs `pnpm-lock.yaml` — the lockfile outranks docs), script/target names verbati
 
 **3. CI and gates.** Glob `.github/workflows/*`, `.gitlab-ci.yml`, `Jenkinsfile`,
 `.circleci/**`, `azure-pipelines*`, `CODEOWNERS`, `.pre-commit-config.yaml`, husky/lefthook
-configs. Read each. Ledger: what CI actually runs (commands verbatim), on which triggers,
+configs — dot-directories: apply the tool caveat above (an empty result for a dir the
+skeleton showed must be re-checked with a listing before concluding "no CI"). Read each. Ledger: what CI actually runs (commands verbatim), on which triggers,
 which checks block merge. CI commands are the highest-value harvest in the census — they are
 machine-executed, therefore verified by construction.
 
@@ -92,6 +104,9 @@ disagreement itself in the ledger, it is a known-trap candidate.
 
 **6. TODO/trap sweep.** Grep, output_mode `content`, head_limit 200:
 pattern `TODO|FIXME|HACK|XXX|WORKAROUND|flaky|known issue|do not|DO NOT|deprecated`
+Exclude changelog files (`CHANGELOG*`, `History.md`, `docs/changelog*`) — they flood the cap
+with prose hits. If the first pass still floods on generic terms (`do not`, `deprecated`),
+re-run without those terms and record the pattern disposition in the ledger.
 Ledger: only entries that reveal operating knowledge (traps, constraints, footguns) — not
 routine TODOs. Each entry keeps its file:line.
 
@@ -125,8 +140,9 @@ is documented as coming from, which config is required vs optional.
 5–10 recent, concrete, repeatable tasks: real merged bug fixes, small features, CI failures.
 Record per probe: task statement, entry point file, observable success checkpoint (a command
 and its expected output, a file state, a passing test). Save to
-`.claude/skills/.skill-library/probes.md`. (The `expected primary skill` field is assigned
-later, at the Phase 3 taxonomy checkpoint — skills don't exist yet.)
+`.claude/skills/.skill-library/probes.md`. Write the literal placeholder line
+`expected primary skill: TBD-phase-3` in each probe now — the Phase 3 taxonomy checkpoint
+replaces it (skills don't exist yet).
 
 ## Phase 2: System map
 

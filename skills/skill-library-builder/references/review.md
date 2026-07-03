@@ -25,14 +25,18 @@ Per generated skill, assert:
 - [ ] description ≤1024 chars, double-quoted, contains ≥3 concrete trigger tokens and (where
       siblings overlap) negative routing.
 - [ ] SKILL.md ≤200 lines; first 40 lines contain when-to-use + procedure start.
-- [ ] every file path mentioned in the skill exists (Glob each one).
+- [ ] every file path mentioned in the skill exists (Glob each one; dot-directory paths need
+      a listing fallback — Glob may return empty there; path-like strings that are command
+      arguments are validated via the command's static check, not Glob).
 - [ ] every load-bearing claim carries a marker (`[VERIFIED:` / `[INFERRED:` /
       `[UNVERIFIED-CMD:`) — Grep for claims sentences without markers in Procedure/Traps/
       Gates sections.
 - [ ] banned judgment verbs absent from Procedure / Decision gates / Known traps sections
       (Grep: `investigate|ensure|as needed|appropriately|if necessary|properly|relevant|handle|consider`
-      — the canonical machine form of authoring.md's ban list; hits outside those sections
-      don't count).
+      — the canonical machine form of authoring.md's ban list). Adjudicating hits: apply word
+      boundaries (`handle` must not count `handler`); skip lines that are verbatim-quoted
+      captured output (they carry `[VERIFIED: cmd]` markers — authoring.md's exemption); hits
+      outside those sections don't count.
 - [ ] stop/escalate list present; worked example present (procedural skills).
 - [ ] provenance block present and complete.
 - [ ] placement: `.claude/skills/<name>/SKILL.md` exactly.

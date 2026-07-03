@@ -62,11 +62,14 @@ context memory.
 
 ## Phase 0: Preflight
 
-1. Resolve arguments (table above). Create `.claude/skills/.skill-library/build/` and
-   `state.json` now — schema is in references/census.md ("Working artifacts"); read that
-   section before continuing. Record the resolved arguments in state.json.
-2. Detect platform: run `git --version` and note the shell (PowerShell / bash / zsh). Every
-   shell command you later publish states the shell it was verified in.
+1. Resolve arguments (table above). Create `.claude/skills/.skill-library/build/` now, and
+   read the state.json schema in references/census.md ("Working artifacts") before
+   continuing. Write state.json ONCE at the end of Preflight (after step 7), when all its
+   fields are known — several are produced by the steps below.
+2. Detect platform: run `git --version` and note the shell (PowerShell / bash / zsh). If
+   both PowerShell and Git Bash are available (Windows), prefer Git Bash for verification
+   commands and record `windows-gitbash`. Every shell command you later publish states the
+   shell it was verified in.
 3. Read the always-loaded context first: `CLAUDE.md`, `AGENTS.md`, `.cursorrules`,
    `.claude/**` (Glob then Read). These are authoritative for workflow/policy facts (which
    package manager, which commands the team runs). Code remains authoritative for behavior

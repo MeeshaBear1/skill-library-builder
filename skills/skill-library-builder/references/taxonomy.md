@@ -26,8 +26,11 @@ thin — can only be filled by invention, which Iron rules 3–4 forbid.
 | typical app/library | 6–12 |
 | monorepo / multi-service | 10–20, only with per-unit justification |
 
-Landing far outside the band means re-check the admission test — usually over-splitting
-(merge siblings) or under-discovery (one more census pass on the thin area).
+LOC means PRODUCTION code only — exclude tests, vendored, and generated trees (a 2k-LOC
+library with a huge test suite is still "small single-purpose"). When a repo straddles two
+bands, take the SMALLER band; never pad upward. Landing far outside the chosen band means
+re-check the admission test — usually over-splitting (merge siblings) or under-discovery
+(one more census pass on the thin area).
 
 ## Candidate catalog — with inclusion criteria
 
