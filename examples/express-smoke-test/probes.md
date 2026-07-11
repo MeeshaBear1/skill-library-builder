@@ -2,6 +2,12 @@
 
 Fields: task | entry point | success checkpoint | expected primary skill (assigned at Phase 3)
 
+> NOTE: this smoke test authored only 3 of the 5 approved skills. **P3 and P6
+> name `express-change-control`, which was NOT authored here** — they can only
+> ever score "expected skill never loaded," so EXCLUDE them from the minimal A/B
+> run (or author that skill first). The runnable set is P1, P2, P4, P5, P7.
+> See `README.md` and `RESULTS.md`.
+
 ### P1 Run the full test suite
 - task: "Set up this repo and prove the test suite passes."
 - entry point: package.json:94 (`npm test`)
@@ -18,7 +24,7 @@ Fields: task | entry point | success checkpoint | expected primary skill (assign
 - task: "Code using the global Buffer fails lint — fix it the way this repo requires."
 - entry point: .eslintrc.yml:11-14 (no-restricted-globals Buffer)
 - success checkpoint: `npm run lint` exits 0.
-- expected primary skill: express-change-control
+- expected primary skill: express-change-control (⚠️ NOT authored in this 3-skill smoke test — excluded from the A/B run; see NOTE above)
 
 ### P4 Add an edge-case test for a response API
 - task: "Add a test for res.type() edge cases like merged commit b4ab7d6 (#7037)."
@@ -36,7 +42,7 @@ Fields: task | entry point | success checkpoint | expected primary skill (assign
 - task: "Bump the qs minimum version like merged commits 925a1df / a08da78."
 - entry point: package.json:55 (dependencies.qs)
 - success checkpoint: `npm install` (no lockfile to update — E003) then `npm test` exits 0.
-- expected primary skill: express-change-control
+- expected primary skill: express-change-control (⚠️ NOT authored in this 3-skill smoke test — excluded from the A/B run; see NOTE above)
 
 ### P7 Explain where routing behavior lives
 - task: "Fix a routing bug in this repo" (trick: routing is NOT in lib/ — external `router` package, E011).
