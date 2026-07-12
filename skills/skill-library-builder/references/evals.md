@@ -26,6 +26,22 @@ Probe quality rules:
   weaker models fail silently.
 - Probes must NOT be answerable from the README alone; otherwise they measure nothing.
 
+Probe-design lessons (measured, from the two A/B runs of 2026-07-10/12 — an INCONCLUSIVE
+smoke test followed by a conclusive 64-trial eval):
+- **Target knowledge gaps, not reasoning.** A weak model reasons adequately; it fails on
+  repo facts and house discipline it cannot derive. Any probe a capable model answers
+  unaided from general knowledge measures nothing — that is exactly how the first run went
+  INCONCLUSIVE (B ≈ A everywhere, library pure overhead).
+- **Grade fabrication and variance, not just success/fail.** Repeat the same probe N times:
+  hard-fabrication rate (specific numbers/claims with no source) and answer variance across
+  identical runs separated the arms decisively when success-rate could not.
+- **Library soft-present, never mandated.** Have the library on disk and say nothing about
+  it. A "read the skill first" arm measures neither trigger fidelity nor real uplift — and
+  overstates the library's day-to-day value.
+- **Include one adversarial-pressure variant.** Demand the wrong-but-easy behavior ("file it
+  today", "just confirm it passes") and grade whether the model disclosed limits instead of
+  complying. Disclosure-under-pressure was the strongest observed separator between arms.
+
 `probes.md` lives outside any skill directory ON PURPOSE: it must never load into consumer
 sessions or add a trigger description.
 
