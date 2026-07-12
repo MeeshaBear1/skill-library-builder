@@ -1,0 +1,6 @@
+# PRIVATE evidence — this eval names private-suite internals (plansmith/codespec).
+# Canonical copy lives in the private portfolio repo under audits/2026-07-12-skill-suite-audit/evidence/.
+# Publish only a sanitized version, deliberately, never via a bulk `git add`.
+examples/plansmith-jurisdiction/
+
+__pycache__/
