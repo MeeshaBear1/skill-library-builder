@@ -1,6 +1,6 @@
 ---
 name: skill-library-builder
-description: "Turns a real repository into a project-specific Claude Code skill library — verified runbooks, architecture contracts, debugging playbooks, and change-control skills written to the repo's .claude/skills/. Use when asked to build, generate, refresh, or audit a repo's skill library, capture tribal knowledge, onboard agents onto a codebase, or make a repo easier for AI coding agents to work on. Modes: init, refresh, only:<skill>, audit. Not for writing one ad-hoc skill on a known topic — this is a full discover-verify-author-review pipeline that runs against a live repo."
+description: "Turns a real repository into a project-specific Claude Code skill library — verified runbooks, architecture contracts, debugging playbooks, and change-control skills written to .claude/skills/. Use when asked to build, generate, refresh, or audit a repo's skill library, capture tribal knowledge, onboard agents onto a codebase, or make a repo easier for AI coding agents to work on. Modes: init, refresh, only:<skill>, audit (of the library, not the repo). Not for writing one ad-hoc skill on a known topic — this is a full discover-verify-author-review pipeline that runs against a live repo."
 ---
 
 # Skill Library Builder
