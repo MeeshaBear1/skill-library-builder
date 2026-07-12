@@ -83,6 +83,17 @@ the final report:
 4. Re-run the same probe set after every refresh — it doubles as a regression suite for the
    library itself.
 
+**Harness boundary (measured; do not skip this):** run both arms in a REAL CLI harness — a
+fresh interactive session or a headless `claude -p` child process launched in the repo — never
+via in-session subagent fan-out (the Agent/Task tool). The harness difference swamps the
+library effect: in our runs, the same weak model on the same probe fabricated success reports
+5/5 as a bare in-session subagent and 0/15 in headless CLI sessions, with the library constant.
+An A/B run through bare subagents measures the fan-out harness, not your library. Corollary
+for grading any arm: never trust the report text alone — audit pass-claims against the
+transcript (was the named command actually run, is the runner output real?), or mechanically
+pre-screen reports with `tools/report_lint.py` (claim-without-command rule) and audit what it
+flags.
+
 ## Interpreting failures (route, don't gloss)
 
 | Symptom | Diagnosis | Route |

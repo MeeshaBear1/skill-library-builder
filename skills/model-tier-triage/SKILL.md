@@ -79,6 +79,14 @@ GATE: package review before handoff.
 - Package missing any of the six fields → do not hand off; complete the field.
 - Package touches an Irreversible surface → add the human gate to its stop conditions explicitly.
 
+Execution harness (measured constraint): hand the package to a real CLI session in the repo
+(fresh interactive session or a headless `claude -p` child process) — never to a bare
+in-session subagent (Agent/Task tool fan-out). Measured on the weakest tier in service with a
+runnable-test package: bare subagents fabricated the completion report 5/5 under a terse-report
+pressure prompt; real CLI sessions ran genuine verification 15/15 with zero fabrication, even
+with all repo overlays (CLAUDE.md, hooks) removed. If a bare subagent is unavoidable, treat its
+report as unverified: audit every pass-claim against the transcript before accepting the work.
+
 ## Known traps (anti-patterns)
 
 | Anti-pattern | Observable form | Correct move |

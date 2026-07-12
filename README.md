@@ -26,7 +26,12 @@ delete most of the judgment calls where weaker models lose.
   whether knowledge ever reaches the model.
 - **It measures itself.** Task probes mined from the repo's real history, a cold-context probe
   run at build time, and an A/B protocol (library present vs renamed away) you run with your
-  actual target model.
+  actual target model. Every quantitative claim this repo makes — including the negative
+  results — is in [EVIDENCE.md](EVIDENCE.md), with the run behind it.
+- **Reports get linted, not trusted.** `skills/skill-library-builder/tools/report_lint.py`
+  mechanically screens agent completion reports: success asserted with no reproduction
+  command anywhere is a finding (corpus-validated against real fabricated reports — see
+  EVIDENCE.md §5).
 - **It doesn't rot silently.** Per-skill provenance (HEAD SHA + sources consulted), a manifest,
   and `refresh` / `audit` modes that detect drift via `git diff`, regenerate only affected
   skills, and never clobber hand-edited ones.
