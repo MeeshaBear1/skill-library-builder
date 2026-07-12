@@ -38,9 +38,23 @@ from the ledger citations — every `[VERIFIED: file:...]` source belongs in the
 hashes after any builder-made fix in Phases 5–6 — builder edits must never later misclassify
 as human edits.
 
+## Instantiated (non-builder) libraries
+
+A `.claude/skills/` set with no `.skill-library/manifest.json` whose skills carry
+`{{PROJECT: …}}` slots or a "Provenance & maintenance" section citing a master authoring
+spec was installed by a master skill library's instantiation protocol, not by this builder.
+`refresh` and `only:` do not apply to those skills — there is no manifest to diff and their
+regeneration is owned by the master pipeline (re-instantiation). `audit` may still run:
+steps 2 (mechanical lint) and 5 (hand-edit inventory, hashless — report "no baseline")
+apply; manifest/staleness steps report "instantiated library — no manifest" instead of
+failing; every structural finding routes to the owning master pipeline. Never regenerate
+over an instantiated skill; new builder skills in such a repo fill gaps only (boundary rule
+in SKILL.md Phase 0 step 4).
+
 ## refresh mode
 
-0. No manifest found → tell the user; offer `init` instead. Never guess provenance.
+0. No manifest found → check for an instantiated library (section above); otherwise tell the
+   user; offer `init` instead. Never guess provenance.
 1. Read the manifest. Run `git rev-parse HEAD`; if equal to `headSha`, report "no drift" and
    stop (still run step 5's hand-edit check — edits happen without commits too).
 2. Drift set: `git diff --name-only <manifest headSha>..HEAD`, filtered by scope/excludes.
@@ -77,8 +91,10 @@ re-verification (test/build commands) can produce normal working-tree side effec
 (node_modules, build output, caches) — in unattended/scheduled runs, restrict step 4 to
 Tier 1 commands and mark the rest "not re-verified":
 
-1. Manifest exists? Every manifest skill directory still present? Every `.claude/skills/*/`
-   directory represented in the manifest? Mismatches → report.
+1. Manifest exists? (No manifest + instantiated-library markers → run the reduced audit per
+   "Instantiated (non-builder) libraries" above.) Every manifest skill directory still
+   present? Every `.claude/skills/*/` directory represented in the manifest? Mismatches →
+   report.
 2. R1 mechanical lint over every skill (review.md) — catches hand edits that broke format.
 3. Staleness: drift set vs each skill's sources (steps 2–3 above) → "stale" list with the
    drifting files named.

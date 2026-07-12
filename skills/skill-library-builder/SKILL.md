@@ -77,7 +77,15 @@ context memory.
    already always-load; reference instead.
 4. Enumerate existing skills: Glob `.claude/skills/*/SKILL.md`. Record each name +
    description. New skills must not collide with or overlap the trigger space of existing ones
-   (Iron rule 7 governs overwrites).
+   (Iron rule 7 governs overwrites). **Instantiated-library detection:** existing skills that
+   carry `{{PROJECT: …}}` slots or a "Provenance & maintenance" section citing a master
+   library's authoring spec were installed by a master skill library's instantiation protocol
+   — they are not builder output and have no manifest. Never regenerate or overwrite them in
+   any mode (see references/refresh.md "Instantiated (non-builder) libraries"). Boundary rule:
+   the master library owns discipline skeletons (change-control, validation doctrine,
+   debugging protocol); this builder owns repo-truth generation (verified commands, system
+   maps, runbooks). Build only skills that fill gaps the instantiated set leaves open, and
+   record the split in the final report.
 5. Detect vendored/generated trees: Glob for `vendor/`, `third_party/`, `dist/`, `build/`,
    `out/`, `node_modules/`, `coverage/`, and Read `.gitattributes` for `linguist-vendored` /
    `linguist-generated` entries. Record the hits as the `exclude` default in state.json —
