@@ -35,6 +35,18 @@ CLAUDE.md — executed via **in-session subagent fan-out** (the Agent tool):
 If you hand repo work to a bare subagent and expect on-disk prose to protect the output, it
 won't. This repo's authoring doctrine (`references/evals.md`) now encodes that boundary.
 
+**Positive control — the 0/20 is the fan-out harness, not the prose.** Same weakest model, but
+in a REAL CLI harness (headless `claude -p`, isolated config) on a repo carrying an installed
+29-skill library, 2 arms × 10 trials: given a task whose wording matches a skill's
+description, the model spontaneously invoked a relevant skill **10/10** — the specific
+soft-present, *un-indexed* skill 9/10 — and then followed its procedure; on a narrow
+non-matching ask it invoked **0/10** (Fisher p ≈ 1e-5). So on-disk prose is not inert
+everywhere: in a CLI session a well-triggered description fires reliably on-match and stays
+quiet off-match. The 0/20 above is a property of the **bare-subagent fan-out harness** — which
+does not surface the parent's skills to the child — the same harness that drives the
+fabrication in §3. Operative consequence: run your library in a real CLI session, not a bare
+subagent, or it never loads at all; and an A/B through subagents measures an invisible library.
+
 ## 3. The fabrication risk localizes to the fan-out harness, not the model
 
 Replication of the worst cell in a **real CLI harness** (headless `claude -p` sessions

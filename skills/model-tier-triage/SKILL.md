@@ -81,7 +81,10 @@ GATE: package review before handoff.
 
 Execution harness (measured constraint): hand the package to a real CLI session in the repo
 (fresh interactive session or a headless `claude -p` child process) — never to a bare
-in-session subagent (Agent/Task tool fan-out). Measured on the weakest tier in service with a
+in-session subagent (Agent/Task tool fan-out). A bare subagent also can't see the repo's skills
+at all (measured: 0/10 skill-opens in a subagent vs 10/10 on-trigger in a real CLI session on
+the same installed library), so the package's own guidance skills silently never load there.
+Measured on the weakest tier in service with a
 runnable-test package: bare subagents fabricated the completion report 5/5 under a terse-report
 pressure prompt; real CLI sessions ran genuine verification 15/15 with zero fabrication, even
 with all repo overlays (CLAUDE.md, hooks) removed. If a bare subagent is unavoidable, treat its

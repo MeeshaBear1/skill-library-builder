@@ -88,7 +88,12 @@ fresh interactive session or a headless `claude -p` child process launched in th
 via in-session subagent fan-out (the Agent/Task tool). The harness difference swamps the
 library effect: in our runs, the same weak model on the same probe fabricated success reports
 5/5 as a bare in-session subagent and 0/15 in headless CLI sessions, with the library constant.
-An A/B run through bare subagents measures the fan-out harness, not your library. Corollary
+An A/B run through bare subagents measures the fan-out harness, not your library. Worse, the
+bare-subagent harness does not even surface your skills to the child: in a real CLI harness on
+a repo with an installed library, a soft-present (un-indexed) skill was spontaneously invoked
+on a trigger-matching ask 10/10 and 0/10 on a non-matching ask, whereas the same class of
+library soft-present in bare subagents opened 0/20 — so an A/B through subagents measures an
+*invisible* library, not a decorative one. Corollary
 for grading any arm: never trust the report text alone — audit pass-claims against the
 transcript (was the named command actually run, is the runner output real?), or mechanically
 pre-screen reports with `tools/report_lint.py` (claim-without-command rule) and audit what it
