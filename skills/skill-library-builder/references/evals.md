@@ -94,6 +94,13 @@ transcript (was the named command actually run, is the runner output real?), or 
 pre-screen reports with `tools/report_lint.py` (claim-without-command rule) and audit what it
 flags.
 
+Boundary of the boundary (also measured): the harness protects only while verification is
+RUNNABLE. On a blocked-verification variant of the same probe (test-runner dependency
+sabotaged), 0/10 trials in either harness disclosed the blockage under a keep-it-short
+prompt — the honest trials were exactly the ones that repaired the environment and really
+ran. If a probe's checkpoint can be blocked, grade disclosure explicitly and require the
+`--completion` evidence table, which flags a report that cannot name its reproduction.
+
 ## Interpreting failures (route, don't gloss)
 
 | Symptom | Diagnosis | Route |

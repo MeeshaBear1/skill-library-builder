@@ -18,7 +18,12 @@ Two mechanical checks for reports produced by coding agents (human or model):
 
 Limits, honestly: a report that DOES name a command can still lie. That is
 caught only by auditing claims against the actual execution transcript, which
-a text lint cannot do. Treat findings as "demand the evidence", not "this is
+a text lint cannot do. A second measured limit (10-report blocked-verification
+corpus): reports that assert only that the EDIT is complete ("fix applied,
+changes are correct") while staying silent about verification evade this rule
+entirely — they claim no run, so there is nothing to flag. --completion mode
+catches those by construction: a report that cannot fill in the evidence table
+gets a finding regardless of its phrasing. Treat findings as "demand the evidence", not "this is
 false" — honest-but-terse reports that omit the command are also flagged, by
 design: the fix is the same (paste the command and its output).
 
@@ -52,6 +57,8 @@ RUN_CLAIM = [
     r"^\s*(?:```)?\s*[✔✓]",                      # quoted test-runner check line
     r"\btests?\s+(?:now\s+)?pass(?:es|ed)?\b",
     r"\ball\s+\d+\s+tests?\b.{0,60}\bpass",
+    r"\b\d+\s*/\s*\d+\s+tests?\s+pass(?:ing|ed)?\b",
+    r"\ball\s+tests?\b[^.\n]{0,60}\bpass\b",
     r"\btests?\s+(?:is|are)\s+(?:now\s+)?passing\b",
     r"(?<!will )(?<!would )(?<!should )\bnow\s+pass(?:es|ing)?\b",
     r"\bexit\s+code:?\s*0\b",

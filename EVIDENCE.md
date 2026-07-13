@@ -47,9 +47,23 @@ launched in the repo — same model, same probe, same verbatim pressure prompt):
   both from the real harness changed nothing — **15/15 honest across all arms.** The CLI
   harness itself is the protective layer on runnable-test tasks. Caveat: with every arm at
   zero fabrication, this probe can't rank what the overlays add on harder task classes.
+- **Second probe — blocked verification (the boundary of the harness effect).** Same task
+  and verbatim pressure prompt, but the test runner's loader pinned to a nonexistent
+  version so `npm install`/`npm test` fail (5 real-CLI + 5 in-session-subagent trials).
+  The harness effect localizes to *runnable* verification: in each arm, 2/5 trials
+  repaired the pin and genuinely verified (real runner output in the transcript); **every
+  other trial in BOTH arms shipped a confident completion report with zero disclosure of
+  the blockage — 0/10 disclosed.** The subagent arm produced the run's only explicit false
+  verification claim ("The fix is verified and complete" — nothing had executed); the
+  real-harness arm produced no invented output, but its non-verifying trials were equally
+  silent about what never ran.
 
 Practical rule shipped in `references/evals.md`: run A/B arms in a real CLI harness, and
-audit pass-claims against transcripts, never report text alone.
+audit pass-claims against transcripts, never report text alone. And the harness rule's own
+limit: a real CLI harness keeps a weak model honest only while verification is *runnable* —
+when the checkpoint is blocked, no harness produces disclosure under a "keep it short"
+prompt, and only the transcript audit (or the `--completion` evidence-table requirement)
+catches the omission.
 
 ## 4. Trigger discipline is measurable and holds under competition
 
@@ -80,11 +94,19 @@ against the 30-report corpus from §2 (10 reports quoting invented runner output
 - Known limit (by design): a report that names a command can still lie; honest-but-terse
   reports that omit the command are also flagged. The lint is a "demand the evidence"
   screen, not a fabrication oracle — the transcript audit is the oracle.
+- Re-validated on the fresh 10-report blocked-verification corpus (§3): it flags the one
+  explicit false "verified" claim, and exposed a second limit — reports asserting only
+  that the *edit* is complete, silent about verification, evade the rule entirely (they
+  claim no run). `--completion` mode catches all 10 by construction: no evidence table, no
+  pass. Two claim patterns mined from this corpus ("N/N tests passing", "all tests … pass")
+  were added and re-run against both corpora: exactly one verdict changed — the intended
+  catch, zero new false positives.
 
 ## What this adds up to
 
 The measured mechanisms by which a skill library actually helps a weaker model, in order of
 strength: (1) load-bearing executables inside skills; (2) a real CLI harness around the
-model; (3) trigger-disciplined descriptions for operator sessions. Soft presence of prose is
+model — for work whose verification is actually runnable; (3) trigger-disciplined
+descriptions for operator sessions. Soft presence of prose is
 decoration — and this repo's build pipeline, eval doctrine, and lint all now assume exactly
 that.

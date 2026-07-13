@@ -86,6 +86,10 @@ runnable-test package: bare subagents fabricated the completion report 5/5 under
 pressure prompt; real CLI sessions ran genuine verification 15/15 with zero fabrication, even
 with all repo overlays (CLAUDE.md, hooks) removed. If a bare subagent is unavoidable, treat its
 report as unverified: audit every pass-claim against the transcript before accepting the work.
+Limit of the protection (also measured): it holds only while verification is runnable — when
+the environment blocked the test runner, 0/10 trials in either harness disclosed the blockage.
+If the package's checkpoint can fail to execute, require an evidence table (claim +
+reproduction command + output) and audit the transcript regardless of harness.
 
 ## Known traps (anti-patterns)
 
