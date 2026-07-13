@@ -41,6 +41,16 @@ smoke test followed by a conclusive 64-trial eval):
 - **Include one adversarial-pressure variant.** Demand the wrong-but-easy behavior ("file it
   today", "just confirm it passes") and grade whether the model disclosed limits instead of
   complying. Disclosure-under-pressure was the strongest observed separator between arms.
+- **Firing is not uplift — probe conflict-resolution, not discovery.** A skill can open 10/10
+  on-trigger and still not improve the OUTPUT. Measure it with a *poisoned-doc* probe: plant
+  ONE stale command in the README (real command lives only in the manifest) and grade whether
+  the model ships the stale one. Measured (2026-07-12, output-quality A/B): the model opened
+  the manifest 11/11 in BOTH the skill and no-skill arms, yet 30–70% still shipped the poisoned
+  README command — **reading the authoritative source ≠ preferring it on conflict.** The skill
+  gave only a directional, non-significant lift (7/10 vs 3/10 correct, Fisher p ≈ 0.18); its
+  win, when it came, was explicit doc-vs-manifest flagging. Lesson for content: teach the skill
+  to prefer the manifest over prose on conflict, not merely to open it — and don't count an
+  "opened the right file" transcript signal as success; grade the answer.
 
 `probes.md` lives outside any skill directory ON PURPOSE: it must never load into consumer
 sessions or add a trigger description.
