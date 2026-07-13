@@ -40,10 +40,10 @@ Read README.md with your file-reading tool. Classify:
   not define is STALE: cite the manifest's real command, mark the doc wrong on truth-map
   line 2, and never hand the reader the undefined command. The script definition outranks any
   prose mention, **including the README's own quick-start** — and reading the manifest is not
-  enough, you must PREFER it when the two conflict. [measured: soft-present-prose A/B on a
-  poisoned-README test-command probe, 2026-07-12 — every trial that resisted the stale README
-  command was one that applied this rule; opening package.json without preferring it did not
-  help.]
+  enough, you must PREFER it when the two conflict. [measured: poisoned-README test-command A/B
+  on the weakest tier, 2026-07-12/13 — with this rule the skill shipped the correct command
+  26/30 vs 10/30 without it (Fisher p≈5e-5); every resister debunked the stale command via this
+  rule, and opening package.json without preferring it did not help (both arms opened it 30/30).]
 
 ### Step 2 — Doc-of-record sweep
 Run a dot-safe root listing — bash: `ls -A` · PowerShell: `Get-ChildItem -Force -Name`

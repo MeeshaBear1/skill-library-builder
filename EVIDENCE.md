@@ -47,25 +47,33 @@ does not surface the parent's skills to the child — the same harness that driv
 fabrication in §3. Operative consequence: run your library in a real CLI session, not a bare
 subagent, or it never loads at all; and an A/B through subagents measures an invisible library.
 
-**Output-quality read — firing does not equal uplift.** The positive control proves the skill
-*opens*; the next question is whether opening makes the ANSWER more correct. Real CLI harness,
-same weakest model, on a repo whose README was given ONE planted-stale command (`npm run
-test:ci` — no such script; the real runner is node:test via tsx, defined only in
-package.json). 10 trials/arm: **B** = repo-truth-discovery present, **A** = no skill. Result:
-correct test command **7/10 (B) vs 3/10 (A)** — a directional lift (decoy-swallow halved), but
-Fisher p ≈ 0.18, **under the pre-registered p<0.05 bar and not conclusive at this N**; coverage
-of the six key onboarding facts was at ceiling in both arms (≈5.5/6, no separation). The
-robust findings sit underneath the headline: (a) **package.json was opened 11/11 in BOTH
-arms** — the skill does not change *whether* the model consults the authoritative source; (b)
-**reading truth ≠ using it** — every trial read package.json yet 30% (B) to 70% (A) still
-shipped the poisoned README command, so onboarding quality breaks at doc-vs-manifest *conflict
-resolution*, not discovery; (c) the skill's measurable win, when it came, was explicit
-conflict-flagging ("README says test:ci but package.json defines only test"), and it fired
-cleanly only ~2/10. So a soft-present prose skill that opened 11/11 and ran its procedure still
-delivered only a weak, non-significant correctness gain — direct support for the "prose is
-decoration" thesis, now measured on output quality in the harness where the skill actually
-loads. The finding was routed back as a content fix: repo-truth-discovery now treats a
-*command* as a claim to verify against the manifest and to prefer over prose on conflict.
+**Output-quality read — firing is not uplift until the content resolves the conflict.** The
+positive control proves the skill *opens*; the sharper question is whether opening makes the
+ANSWER more correct. Real CLI harness, same weakest model, on a repo whose README carried ONE
+planted-stale command (`npm run test:ci` — no such script; the real runner is node:test via
+tsx, defined only in package.json). Graded on whether the model's recommended test command was
+the real one (hand-audited by the primary command — the regex over-credits any trial that
+names `npm test` even as a secondary "alternative"):
+
+- **Pilot (10/arm, first skill version):** correct **7/10 (B, skill) vs 3/10 (A, no skill)** —
+  a directional lift but Fisher p ≈ 0.18, under the pre-registered bar. The robust finding sat
+  underneath: **package.json was opened 11/11 in BOTH arms**, yet 30% (B) to 70% (A) still
+  shipped the poisoned README command — **reading truth ≠ using it.** Onboarding quality breaks
+  at doc-vs-manifest *conflict resolution*, not discovery; the skill's wins came from explicit
+  conflict-flagging, which fired cleanly only ~2/10.
+- **Content fix:** repo-truth-discovery was taught that **a command is a claim** — verify each
+  against the manifest's `scripts`, and PREFER the manifest over prose on conflict (opening it
+  is not enough).
+- **Confirmation (30/arm, patched skill):** correct **26/30 (87%, B) vs 10/30 (33%, A)**,
+  Fisher **p ≈ 5e-5** (+53 pp) — the pre-registered bar cleared. 12/13 audited B trials wrote
+  the debunk in the rule's own words; the no-skill baseline reproduced (33%) and still opened
+  package.json 30/30 while swallowing the decoy 20/30 (decoy-swallow 67% A → 13% B).
+
+So a soft-present prose skill CAN produce a large, significant output-quality lift — but only
+once its content resolves the conflict, not merely opens the source. Prose that just fires gave
+p ≈ 0.18; prose that teaches *prefer the manifest* gave p ≈ 5e-5. The measurement drove the fix
+and the fix cleared the bar — the eval→content→regression loop of `references/evals.md`, run
+end to end on the weakest tier.
 
 ## 3. The fabrication risk localizes to the fan-out harness, not the model
 

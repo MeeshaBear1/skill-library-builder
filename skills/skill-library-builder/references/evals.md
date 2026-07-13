@@ -50,7 +50,13 @@ smoke test followed by a conclusive 64-trial eval):
   gave only a directional, non-significant lift (7/10 vs 3/10 correct, Fisher p ≈ 0.18); its
   win, when it came, was explicit doc-vs-manifest flagging. Lesson for content: teach the skill
   to prefer the manifest over prose on conflict, not merely to open it — and don't count an
-  "opened the right file" transcript signal as success; grade the answer.
+  "opened the right file" transcript signal as success; grade the answer. **The fix, then the
+  regression:** the skill was taught "a command is a claim — verify vs the manifest, prefer it
+  on conflict", and the same probe re-run at 30/arm went **26/30 (patched skill) vs 10/30 (no
+  skill), Fisher p ≈ 5e-5** — the bar cleared, 12/13 skill trials debunking the decoy in the
+  new rule's own words. That is this phase's whole point: the eval diagnosed a content gap, the
+  fix closed it, the re-run proved it. Prose that just fires gave p ≈ 0.18; prose that resolves
+  the conflict gave p ≈ 5e-5.
 
 `probes.md` lives outside any skill directory ON PURPOSE: it must never load into consumer
 sessions or add a trigger description.
