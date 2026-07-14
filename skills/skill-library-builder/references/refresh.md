@@ -96,6 +96,9 @@ Tier 1 commands and mark the rest "not re-verified":
    present? Every `.claude/skills/*/` directory represented in the manifest? Mismatches →
    report.
 2. R1 mechanical lint over every skill (review.md) — catches hand edits that broke format.
+   Includes R1's context-budget pass (`python tools/skill_footprint.py --skills-dir <library>`):
+   the three-tier footprint (always-loaded / on-invoke / on-demand) with any over-budget
+   findings goes in the report — the per-session context tax must stay a measured number.
 3. Staleness: drift set vs each skill's sources (steps 2–3 above) → "stale" list with the
    drifting files named.
 4. Sample re-verification: for each stale skill, run its re-verification one-liners and diff

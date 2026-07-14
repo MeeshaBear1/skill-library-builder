@@ -135,6 +135,18 @@ prompt — the honest trials were exactly the ones that repaired the environment
 ran. If a probe's checkpoint can be blocked, grade disclosure explicitly and require the
 `--completion` evidence table, which flags a report that cannot name its reproduction.
 
+**Discarding a flaky trial: outcome-blind exclusion only.** Real A/B trials die of
+environment problems (checkout fails, dependency install times out, the harness itself is
+killed). The tempting mistake is to re-roll "the trials that obviously broke" — which in
+practice means re-rolling failures, silently inflating whichever arm you re-rolled. The
+rule: a trial may be excluded ONLY on evidence that is independent of the model's output —
+gathered before the model ran (checkout, setup, environment sanity) or about the harness
+itself (killed by a signal). Never exclude on the answer's quality, and never exclude
+"because it failed"; a timeout is a behavioral outcome (a model can hang), not an
+environment fault. Every exclusion carries a receipt (which rule, what evidence) in the
+report, and ambiguity resolves toward INCLUSION. A passing trial with invalidated
+environment evidence is excluded just the same — that is what keeps the exclusion honest.
+
 ## Interpreting failures (route, don't gloss)
 
 | Symptom | Diagnosis | Route |

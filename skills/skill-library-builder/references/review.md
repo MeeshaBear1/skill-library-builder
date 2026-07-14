@@ -40,8 +40,16 @@ Per generated skill, assert:
 - [ ] stop/escalate list present; worked example present (procedural skills).
 - [ ] provenance block present and complete.
 - [ ] placement: `.claude/skills/<name>/SKILL.md` exactly.
+- [ ] context budget: run `python tools/skill_footprint.py --skills-dir <library>` — it
+      measures the three loading tiers (always-loaded description / on-invoke SKILL.md body /
+      on-demand references) and enforces: description ≤1024B (hard fail — platform limit),
+      SKILL.md body ≤32KB (warn — split into references/), library-wide tier-1 total ≤16KB
+      (warn ≈ 4k tokens riding in EVERY session). Exit 1 = over budget; fix before shipping.
+      This is the library's economic claim ("progressive disclosure keeps the per-session tax
+      to the descriptions") turned into a gate — the tool handles folded (`>-`) descriptions,
+      which naive `grep ^description:` understates by ~98%.
 
-Output: lint table (skill × checks), included in the final report.
+Output: lint table (skill × checks) + the footprint tier totals, included in the final report.
 
 ## R2 — Fresh-context factual verification
 
