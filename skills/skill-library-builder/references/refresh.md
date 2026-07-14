@@ -103,8 +103,17 @@ Tier 1 commands and mark the rest "not re-verified":
    mark skipped lines "not re-verified".
 5. Hand-edit inventory: recompute `git hash-object` for every file in every skill's `files`
    map; any mismatch → hand-edited.
-6. Report: healthy / stale (with drift evidence) / broken (lint failures) / orphaned /
-   hand-edited — plus the single recommended action for each (usually `refresh`).
+6. Usage pass (the reaper): `python tools/skill_usage.py --skills-dir <library> [--json]` —
+   mines Claude Code transcripts for two signals per skill: `Skill` tool invocations AND file
+   reads under the skill's directory (read-first skills never show an invocation — never judge
+   on invocations alone). `never-used` / `dormant` skills are deletion/review candidates; the
+   receipt is the scanned session count + date window printed in the report. Unused skills
+   aren't free: every description rides in the system prompt each session and dilutes trigger
+   matching. Exit 2 = no transcripts = no evidence either way — report "usage unknown", never
+   "unused".
+7. Report: healthy / stale (with drift evidence) / broken (lint failures) / orphaned /
+   hand-edited / never-used / dormant (with usage receipts) — plus the single recommended
+   action for each (usually `refresh`; for never-used with valid content, `delete or demote`).
 
 Audit writes nothing to the repo or the library — it is the mode to schedule.
 
