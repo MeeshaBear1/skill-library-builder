@@ -34,6 +34,15 @@ Rules:
 - Include negative routing whenever a sibling could plausibly match the same moment.
 - Never write two descriptions whose trigger surfaces overlap — Phase 5's trigger matrix will
   send them back.
+- **Contested asks are WON by positive triggers, not just lost by weak boundaries** (measured,
+  2026-07-13, 25-skill routing gate): an ask kept mis-routing to an overreaching sibling even
+  after that sibling's "Not for" explicitly disclaimed it, and flipped only when the rightful
+  owner's "Use when" gained a positive trigger for that exact ask shape. Two-sided fix:
+  boundary on the overreacher AND a positive trigger on the owner — and when two skills share
+  a phenomenon, give each side its own noun so the asks have distinct anchors. (Sibling
+  lesson, same gate, 2026-07-12: `none`-asks are guarded by the WEAKEST boundary among ALL
+  co-installed descriptions — a fixed overreach migrates to the next-most-tempting skill.
+  Both mean: re-run the routing gate after ANY description change on the surface.)
 
 Example (good):
 > "Debugging playbook for acme-api: known failure modes, log locations, and branch-explicit

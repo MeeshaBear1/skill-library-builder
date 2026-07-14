@@ -58,6 +58,19 @@ smoke test followed by a conclusive 64-trial eval):
   fix closed it, the re-run proved it. Prose that just fires gave p ≈ 0.18; prose that resolves
   the conflict gave p ≈ 5e-5.
 
+- **Bury the fence at real-world depth — a both-arms ceiling is a fixture bug, not a
+  verdict.** Measured (2026-07-13, planted Chesterton's-fence A/B for a history-archaeology
+  skill): with the guard's justification visible in a commit SUBJECT line, both arms hit
+  10/10 (Fisher p = 1.0) — the unaided model already runs `git log --oneline`, so the probe
+  measured baseline behavior. Re-planted at the depth where such reasons actually hide
+  (commit body only, blame owned by a later cosmetic commit, natural deletion pressure in
+  the ask), the unaided arm deleted the load-bearing guard 7/10 and cited the real reason
+  0/10, while the skill arm kept 10/10 and cited 10/10 (primary p ≈ 0.0031, citation
+  p ≈ 1.1e-5). Publish the ceiling run as its pre-registered negative, then fix the FIXTURE
+  in a v2 — never quietly re-roll it. Corollary: grade *grounded* success separately from
+  lucky success — the shallow run's "keeps" included plausible guesses that never touched
+  history (fabricated intent that happened to land right).
+
 `probes.md` lives outside any skill directory ON PURPOSE: it must never load into consumer
 sessions or add a trigger description.
 
