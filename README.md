@@ -51,7 +51,8 @@ and stays in the target repo.
   truth actually lives before touching code: README trust test, doc-of-record sweep
   (DECISIONS.md, PROGRESS.md, `.planning/`), pivot/squash history probes, an empty-repo
   protocol (check the remote before you scaffold), and a supersession check. Distilled from
-  a survey of 84 real repos where trusting the README was the #1 cheap-model failure.
+  a survey of a large real-world repo portfolio where trusting the README was the #1
+  cheap-model failure.
 - **`model-tier-triage`** — the economics skill: a four-class task-triage table, six
   out-of-depth stop signals with exact trigger counts, a ≤30-line escalation artifact so the
   expensive model answers one crisp question instead of un-burying a mess, and a downshift
@@ -137,8 +138,8 @@ live smoke test against expressjs/express (15 friction items, all fixed — incl
 would-be-fatal ones: silent empty-Glob-on-dot-directories misreads and the unattended
 dependency-install deadlock).
 
-The Tier-2 companion skills were added the same day: authored from an 84-repo portfolio
-survey (patterns generalized, all private content stripped), then passed through the same
+The Tier-2 companion skills were added the same day: authored from a large multi-repo
+portfolio survey (patterns generalized, all private content stripped), then passed through the same
 gate stack — fresh-context factual verification (every quoted command output reproduced,
 one wrong git error message caught and fixed), a 10-probe trigger-discrimination matrix
 (10/10 routed correctly), banned-verb lint, and a blocking secrets + privacy scan

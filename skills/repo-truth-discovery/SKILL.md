@@ -8,8 +8,8 @@ description: "Branch-explicit recon procedure for finding where a repository's t
 Answers "where does the truth actually live in this repo?" before any work starts. The #1
 observed weak-agent failure in unfamiliar repos is trusting README/surface signals — stale
 READMEs, boilerplate READMEs, truth hiding in DECISIONS.md or .planning/, superseded sibling
-repos, empty-looking clones with content on the remote [INFERRED: portfolio survey 2026-07-02,
-84 repositories]. Output: a 10-line truth map (Step 7), written BEFORE any code change.
+repos, empty-looking clones with content on the remote [INFERRED: multi-repo portfolio survey
+2026-07-02]. Output: a 10-line truth map (Step 7), written BEFORE any code change.
 
 ## When NOT to use
 - Building a complete skill library for a repo → use **skill-library-builder** (it runs this
@@ -188,9 +188,9 @@ PROJECT.md) by reading the files the procedure names.
 
 ## Provenance
 - generated: 2026-07-02 · generator: portfolio-survey + manual verification
-- sources: cross-repo portfolio survey (84 repositories; patterns only — no repo-identifying
-  content retained); command forms executed 2026-07-02 in a local git repository (bash +
-  PowerShell)
+- sources: cross-repo portfolio survey (a large multi-repo portfolio; patterns only — no
+  repo-identifying content retained); command forms executed 2026-07-02 in a local git
+  repository (bash + PowerShell)
 - verified-shell: bash and powershell (paired forms given where syntax differs)
 - refresh: pattern-based discipline skill — re-review when doc conventions (GSD .planning/,
   CLAUDE.md @-includes) change; run skill-library-builder in refresh mode for library use.
