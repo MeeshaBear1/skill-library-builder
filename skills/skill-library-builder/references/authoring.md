@@ -159,7 +159,7 @@ Re-verification section format (the last content section of every generated skil
 Tier 1–2 command per load-bearing volatile fact, one per line, with its captured observation
 appended as a comment:
 
-```
+```text
 git grep -c "jest" package.json          # verified <today's date>: prints 1
 npm run test:unit -- --listTests | more  # verified <today's date>: lists 34 files (bash)
 ```

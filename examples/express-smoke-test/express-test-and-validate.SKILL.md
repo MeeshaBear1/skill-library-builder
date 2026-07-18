@@ -64,7 +64,7 @@ $ echo $?
 Full suite afterwards: `npm test` → "1258 passing (16s)", exit 0.
 
 ## Re-verification
-```
+```text
 node -p "require('./package.json').scripts.test"  # verified 2026-07-02: prints mocha --require test/support/env --reporter spec --check-leaks test/ test/acceptance/ (bash)
 npm test                                          # verified 2026-07-02: exit 0, "1258 passing (16s)" (bash; first-ever run may hit trap T1)
 npx mocha --require test/support/env --reporter spec test/res.send.js  # verified 2026-07-02: exit 0, "75 passing (664ms)" (bash)
