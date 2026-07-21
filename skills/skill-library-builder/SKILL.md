@@ -1,6 +1,6 @@
 ---
 name: skill-library-builder
-description: "Turns a real repository into a project-specific Claude Code skill library — verified runbooks, architecture contracts, debugging playbooks, and change-control skills written to .claude/skills/. Use when asked to build, generate, refresh, or audit a repo's skill library, capture tribal knowledge, onboard agents onto a codebase, or make a repo easier for AI coding agents to work on. Modes: init, refresh, only:<skill>, audit (of the library, not the repo). Not for writing one ad-hoc skill on a known topic — this is a full discover-verify-author-review pipeline that runs against a live repo."
+description: "Turns a real repository into a project-specific Claude Code skill library — verified runbooks, architecture contracts, debugging playbooks, and change-control skills written to .claude/skills/. Use when asked to build, generate, refresh, or audit a repo's skill library, capture tribal knowledge, onboard agents onto a codebase, or make a repo easier for AI coding agents to work on. Use also when an agent run on a repo failed/stumbled and the skill library may be the cause. Modes: init, refresh, only:<skill>, audit (of the library, not the repo), improve (one observed-job improvement loop). Not for writing one ad-hoc skill on a known topic — this is a full discover-verify-author-review pipeline that runs against a live repo."
 ---
 
 # Skill Library Builder
@@ -16,13 +16,19 @@ Arguments (all optional, parse from the user's request):
 
 | Arg | Values | Default |
 |---|---|---|
-| mode | `init` \| `refresh` \| `only:<skill-name>` \| `audit` | `init` — but if `.claude/skills/.skill-library/manifest.json` exists and no mode was given, use `refresh` |
+| mode | `init` \| `refresh` \| `only:<skill-name>` \| `audit` \| `improve` | `init` — but if `.claude/skills/.skill-library/manifest.json` exists and no mode was given, use `refresh` |
 | scope | path within repo | repo root |
 | exclude | glob list | vendored/generated trees found in preflight |
 | approve | `auto` \| `checkpoint` | `checkpoint` (`auto` only if the user said to run unattended) |
 
 `refresh`, `only:`, and `audit` modes: read `references/refresh.md` and follow it instead of
 the init pipeline below.
+
+`improve` mode: read `references/improve.md` and follow it instead of the init pipeline. Use it
+when a real agent job on the repo stumbled and the suspected cause is a library gap — it runs one
+observed-job loop (baseline → earliest gap → smallest intervention → verification → fresh rerun →
+retain/revise/remove) against a recorded job contract. Choose `improve` over `audit` whenever a
+specific failed trajectory exists.
 
 ## Iron rules (non-negotiable, all modes)
 
